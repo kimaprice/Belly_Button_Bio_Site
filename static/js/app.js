@@ -23,6 +23,17 @@ function initPage() {
     //Get selected value
     let dropDownId = dropDown.property("value");
 
+    //Create Divs for MetaData
+    let panel = d3.select(".panel-body");
+    panel.append("div").attr("id","id");
+    panel.append("div").attr("id",'ethnicity');
+    panel.append("div").attr("id",'gender');
+    panel.append("div").attr("id",'age');
+    panel.append("div").attr("id",'location');
+    panel.append("div").attr("id",'bbbtype');
+    panel.append("div").attr("id",'wfreq');
+ 
+
     //create graphs and tables with data for that value
     createBarGraph(dropDownId);
     createBubbleChart(dropDownId);
@@ -97,8 +108,21 @@ function createBarGraph(sample){
 
 //Create MetaData Table Function
 function createMetaData(sample){
-  console.log(sample);
+  d3.json(bellyButton).then(function(data) {
+    let metaData = data.metadata;
+    let selectedData = metaData.filter(m => m.id == sample);
+    let result = selectedData[0];
 
+
+  //locate metadata panel
+  d3.select("#id").text(`id: ${result.id}`);
+  d3.select("#ethnicity").text(`ethnicity: ${result.ethnicity}`);
+  d3.select("#gender").text(`gender: ${result.gender}`);
+  d3.select("#age").text(`age: ${result.age}`);
+  d3.select("#location").text(`location: ${result.location}`);
+  d3.select("#bbtype").text(`bbtype: ${result.bbtype}`);
+  d3.select("#wfreq").text(`wfreq: ${result.wfreq}`);
+  });
 }
 
 //Create Guage Function
