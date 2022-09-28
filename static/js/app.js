@@ -68,8 +68,14 @@ function createBarGraph(sample){
   Plotly.newPlot('bar', data, layout);
 }
 
+//Create MetaData Table Function
+function createMetaData(sample){
+  console.log(sample);
+
+}
+
 //Create Guage Function
-function createBarGraph(sample){
+function createGuage(sample){
   let washes = 0;
   var data = [
     {
@@ -107,6 +113,17 @@ function createBarGraph(sample){
 
   Plotly.newPlot('gauge', data, layout);
 }
+
+//-------------  On DropDown Change function ---------------//
+function optionChanged(sample){
+
+  //create graphs and tables with data for that value
+  createBarGraph(sample);
+  createBubbleChart(sample);
+  createMetaData(sample);
+  createGuage(sample);
+}
+
 
 // TODOS:
 // 4.  Create on dropdown change event
