@@ -1,107 +1,114 @@
 // Test that data is being grabbed
 //<!--./index.js-->
 
-// ------------- 1.  Access json data  ------------------------//
-// Get the endpoint
-const bellyButton = "https://2u-data-curriculum-team.s3.amazonaws.com/dataviz-classroom/v1.1/14-Interactive-Web-Visualizations/02-Homework/samples.json";
+initPage();
 
-// Fetch the JSON data and console log it
-d3.json(bellyButton).then(function(data) {
-    console.log(data);
-    let names = data.names;
-    let dropDown = d3.select("#selDataset")
+// ------------- Initialization Function --------------------//
+function initPage() {
 
-    //Populate dropdown
-    names.forEach((n) => {
-      let opt = dropDown.append("option")
-      opt.text(n);
-      opt.property("value", n);
-    });
-});
+  // Get the endpoint
+  const bellyButton = "https://2u-data-curriculum-team.s3.amazonaws.com/dataviz-classroom/v1.1/14-Interactive-Web-Visualizations/02-Homework/samples.json";
 
-//----------------- 2.  Generate Placeholder Graphs and table ---------//
+  // Fetch the JSON data and console log it
+  d3.json(bellyButton).then(function(data) {
+      console.log(data);
+      let names = data.names;
+      let dropDown = d3.select("#selDataset")
 
-//Bubble
+      //Populate dropdown
+      names.forEach((n) => {
+        let opt = dropDown.append("option")
+        opt.text(n);
+        opt.property("value", n);
+      });
 
-var trace1 = {
-  x: [1, 2, 3, 4],
-  y: [10, 11, 12, 13],
-  mode: 'markers',
-  marker: {
-    size: [40, 60, 80, 100]
-  }
-};
+    //Get selected value
+    let dropDownId = dropDown.property("value");
 
-var data = [trace1];
+    //create graphs and tables with data for that value
+    createBarGraph(dropDownId);
+    createBubbleChart(dropDownId);
+    createMetaData(dropDownId);
+    createGuage(dropDownId);
 
-var layout = {
-  showlegend: false
-};
+  });
+}
 
-Plotly.newPlot('bubble', data, layout);
+//----------------- Functions for Graphs and Table ---------//
 
-//Horizontal Bar
-var trace1 = {
-  x: [1, 2, 3, 4],
-  y: [10, 11, 12, 13],
-  type: 'bar',
-  orientation: 'h'
-};
+//Create Bubble Chart Function
+function createBubbleChart(sample){
+  var trace1 = {
+    x: [],
+    y: [],
+    mode: 'markers',
+    marker: {
+      size: []
+    }
+  };
+  var data = [trace1];
+  var layout = {
+    showlegend: false
+  };
+  Plotly.newPlot('bubble', data, layout);
+}
 
-var data = [trace1];
+//Create Horizontal Bar Function
+function createBarGraph(sample){
+  var trace1 = {
+    x: [],
+    y: [],
+    type: 'bar',
+    orientation: 'h'
+  };
+  var data = [trace1];
+  var layout = {
+    showlegend: false,
+  };
+  Plotly.newPlot('bar', data, layout);
+}
 
-var layout = {
-  showlegend: false,
-};
-
-Plotly.newPlot('bar', data, layout);
-
-//Guage
-var data = [
-  {
-    type: "indicator",
-    mode: "gauge",
-    title: { text: "Belly Button Washing Frequency", font: { size: 24 } },
-    gauge: {
-      axis: { range: [null, 9], tickwidth: 1,},
-      bgcolor: "white",
-      borderwidth: 2,
-      bordercolor: "gray",
-      steps: [
-        { range: [0, 1], color: "#d4d9cc" },
-        { range: [1, 2], color: "#c3ccb4" },
-        { range: [2, 3], color: "#bbc9a3" },
-        { range: [3, 4], color: "#b2c491" },
-        { range: [4, 5], color: "#abc280" },
-        { range: [5, 6], color: "#98b368" },
-        { range: [6, 7], color: "#8eb053" },
-        { range: [7, 8], color: "#79a32f" },
-        { range: [8, 9], color: "#6c9c17" }
-      ],
-      threshold: {
-        line: { color: "red", width: 4 },
-        thickness: 0.75,
-        value: 2.5
+//Create Guage Function
+function createBarGraph(sample){
+  let washes = 0;
+  var data = [
+    {
+      type: "indicator",
+      mode: "gauge",
+      title: { text: "Belly Button Washing Frequency", font: { size: 24 } },
+      gauge: {
+        axis: { range: [0, 9], tickwidth: 1,},
+        bgcolor: "white",
+        borderwidth: 2,
+        bordercolor: "gray",
+        steps: [
+          { range: [0, 1], color: "#d4d9cc" },
+          { range: [1, 2], color: "#c3ccb4" },
+          { range: [2, 3], color: "#bbc9a3" },
+          { range: [3, 4], color: "#b2c491" },
+          { range: [4, 5], color: "#abc280" },
+          { range: [5, 6], color: "#98b368" },
+          { range: [6, 7], color: "#8eb053" },
+          { range: [7, 8], color: "#79a32f" },
+          { range: [8, 9], color: "#6c9c17" }
+        ],
+        threshold: {
+          line: { color: "red", width: 4 },
+          thickness: 0.75,
+          value: washes
+        }
       }
     }
-  }
-];
+  ];
+  var layout = {
+    margin: { t: 25, r: 25, l: 25, b: 25 },
+    font: { color: "black", family: "Arial" }
+  };
 
-var layout = {
-  margin: { t: 25, r: 25, l: 25, b: 25 },
-  font: { color: "black", family: "Arial" }
-};
-
-Plotly.newPlot('gauge', data, layout);
+  Plotly.newPlot('gauge', data, layout);
+}
 
 // TODOS:
-// X1.  Access Json data
-// X2.  Populate dropdown with names
-// 3.  Generate placeholder graphs and tables - init function
-//   a.  MetaData
-//   Xb.  Bubble
-//   Xc.  Horizontal Bar
-//   d.  Guage
 // 4.  Create on dropdown change event
 //   1.  get the selected value in dropdown - day3-act5
 //   2.  Gather the data for the selected name
