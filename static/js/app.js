@@ -1,13 +1,13 @@
-// Test that data is being grabbed
-//<!--./index.js-->
-// Get the endpoint
+//Dom's exra tutoring session provided tips and tricks used in some of my code
+
+// set the endpoint URL
 const bellyButton = "https://2u-data-curriculum-team.s3.amazonaws.com/dataviz-classroom/v1.1/14-Interactive-Web-Visualizations/02-Homework/samples.json";
 
 initPage();
 
 // ------------- Initialization Function --------------------//
 function initPage() {
-  // Fetch the JSON data and console log it
+  // Fetch the JSON data and console log it for analysis and to prove connection
   d3.json(bellyButton).then(function(data) {
       console.log(data);
       let names = data.names;
@@ -34,7 +34,7 @@ function initPage() {
     panel.append("div").attr("id",'wfreq');
  
 
-    //create graphs and tables with data for that value
+    //create graphs and tables with data for initial value
     createBarGraph(dropDownId);
     createBubbleChart(dropDownId);
     createMetaData(dropDownId);
@@ -42,10 +42,11 @@ function initPage() {
   });
 }
 
-//----------------- Functions for Graphs and Table ---------//
+//----------------- Functions for Graphs and MetaData Panel ---------//
 
 //Create Bubble Chart Function
 function createBubbleChart(sample){
+  //Get the data
   d3.json(bellyButton).then(data => {
     let samples = data.samples;
     let selectedArray = samples.filter(s => s.id == sample);
@@ -55,6 +56,7 @@ function createBubbleChart(sample){
     let otu_labels = result.otu_labels;
     let sample_values = result.sample_values;
 
+    //Create the buble with sample values for the size, color using the ids and the ID on the x axis and sample values on the y axies
     var trace1 = {
       x: otu_ids,
       y: sample_values,
@@ -73,12 +75,15 @@ function createBubbleChart(sample){
       title: 'Bacteria Cultures per Sample',
       xaxis: {title: "OTU ID"}
     };
+
+    //Plot the bubble chart
     Plotly.newPlot('bubble', data, layout);
   });
 }
 
 //Create Horizontal Bar Function
 function createBarGraph(sample){
+  //Get the data
   d3.json(bellyButton).then(function(data) {
     let samples = data.samples;
     let selectedArray = samples.filter(s => s.id == sample);
@@ -88,6 +93,7 @@ function createBarGraph(sample){
     let otu_labels = result.otu_labels;
     let sample_values = result.sample_values;
 
+    //Grab just the top 10 and put them in descending order
     let y_val = otu_ids.slice(0,10).reverse();
 
     var trace1 = {
@@ -102,19 +108,21 @@ function createBarGraph(sample){
       showlegend: false,
       title: 'Top 10 Bacteria Cultures Found'
     };
+
+    //plot the bar graph
     Plotly.newPlot('bar', data, layout);
   });
 }
 
 //Create MetaData Table Function
 function createMetaData(sample){
+  //Get the data
   d3.json(bellyButton).then(function(data) {
     let metaData = data.metadata;
     let selectedData = metaData.filter(m => m.id == sample);
     let result = selectedData[0];
 
-
-  //locate metadata panel
+  //Update each div with metadata for selected sample
   d3.select("#id").text(`id: ${result.id}`);
   d3.select("#ethnicity").text(`ethnicity: ${result.ethnicity}`);
   d3.select("#gender").text(`gender: ${result.gender}`);
@@ -127,12 +135,13 @@ function createMetaData(sample){
 
 //Create Guage Function
 function createGuage(sample){
+  //Get the data
   d3.json(bellyButton).then(function(data) {
     let metaData = data.metadata;
     let selectedData = metaData.filter(m => m.id == sample);
     let result = selectedData[0];
 
-
+    //create the guage 
     let washes = result.wfreq;
     var data = [
       {
@@ -146,6 +155,7 @@ function createGuage(sample){
           bar: { thickness:0},
           borderwidth: 2,
           bordercolor: "gray",
+          //Create the ranges for 0-9 with colorscale
           steps: [
             { range: [-.5, .5], color: "#d4d9cc" },
             { range: [.5, 1.5], color: "#c3ccb4" },
@@ -158,6 +168,7 @@ function createGuage(sample){
             { range: [7.5, 8.5], color: "#6c9c17" },
             { range: [8.5, 9.5], color: "#558501"}
           ],
+          //Set the threshold to # of washes
           threshold: {
             line: { color: "black", width: 4 },
             thickness: 0.75,
@@ -169,7 +180,7 @@ function createGuage(sample){
     var layout = {
       font: { color: "black", family: "Arial" }
     };
-
+    //plot the guage
     Plotly.newPlot('gauge', data, layout);
   });
 }
@@ -177,7 +188,7 @@ function createGuage(sample){
 //-------------  On DropDown Change function ---------------//
 function optionChanged(sample){
 
-  //create graphs and tables with data for that value
+  //create graphs and tables with data for the selected value
   createBarGraph(sample);
   createBubbleChart(sample);
   createMetaData(sample);
